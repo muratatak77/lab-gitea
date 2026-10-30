@@ -10,6 +10,8 @@ func PaginateSlice[S ~[]E, E any](list S, page, pageSize int) S {
 		return list
 	}
 
+	page--
+
 	if page*pageSize >= len(list) {
 		return list[len(list):]
 	}
