@@ -223,6 +223,12 @@ type swaggerParameterBodies struct {
 	UserBadgeOption api.UserBadgeOption
 
 	// in:body
+	CreateSavedReplyOption api.CreateSavedReplyOption
+
+	// in:body
+	EditSavedReplyOption api.EditSavedReplyOption
+
+	// in:body
 	CreateVariableOption api.CreateVariableOption
 
 	// in:body

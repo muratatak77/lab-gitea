@@ -754,6 +754,15 @@ func registerWebRoutes(m *web.Router, webAuth *AuthMiddleware) {
 			m.Get("", user_setting.BlockedUsers)
 			m.Post("", web.Bind[*forms.BlockUserForm](), user_setting.BlockedUsersPost)
 		})
+
+		m.Group("/saved_replies", func() {
+			m.Get("", user_setting.SavedReplies)
+			m.Post("", user_setting.SavedRepliesPost)
+			m.Get("/list", user_setting.SavedRepliesList)
+			m.Get("/{id}/edit", user_setting.SavedReplyEdit)
+			m.Post("/{id}/edit", user_setting.SavedReplyEditPost)
+			m.Post("/{id}/delete", user_setting.SavedReplyDelete)
+		})
 	}, reqSignIn, user_setting.SettingsCtxData)
 
 	m.Group("/user", func() {

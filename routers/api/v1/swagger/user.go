@@ -49,6 +49,20 @@ type swaggerResponseUserSettings struct {
 	Body api.UserSettings `json:"body"`
 }
 
+// SavedReply
+// swagger:response SavedReply
+type swaggerResponseSavedReply struct {
+	// in:body
+	Body api.SavedReply `json:"body"`
+}
+
+// SavedReplyList
+// swagger:response SavedReplyList
+type swaggerResponseSavedReplyList struct {
+	// in:body
+	Body []api.SavedReply `json:"body"`
+}
+
 // BadgeList
 // swagger:response BadgeList
 type swaggerResponseBadgeList struct {

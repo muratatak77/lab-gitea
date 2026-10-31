@@ -1,0 +1,23 @@
+-
+  id: 1
+  user_id: 2
+  title: Needs reproduction
+  content: Could you share the steps to reproduce this?
+  created_unix: 1700000000
+  updated_unix: 1700000000
+
+-
+  id: 2
+  user_id: 2
+  title: Duplicate
+  content: Closing as a duplicate.
+  created_unix: 1700000000
+  updated_unix: 1700000000
+
+-
+  id: 3
+  user_id: 4
+  title: Duplicate
+  content: This was reported before.
+  created_unix: 1700000000
+  updated_unix: 1700000000

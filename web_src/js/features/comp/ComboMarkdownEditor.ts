@@ -25,6 +25,7 @@ import {initTabSwitcher} from '../../modules/fomantic/tab.ts';
 import type EasyMDE from 'easymde';
 import type Dropzone from '@deltablot/dropzone';
 import {localUserSettings} from '../../modules/user-settings.ts';
+import {initSavedRepliesButton} from './SavedReplies.ts';
 
 /**
  * validate if the given textarea is non-empty.
@@ -176,6 +177,7 @@ export class ComboMarkdownEditor {
     }
 
     this.initMarkdownButtonTableAdd();
+    initSavedRepliesButton(this.container, this.textarea);
 
     initTextareaMarkdown(this.textarea);
     initTextareaEvents(this.textarea, this.dropzone);

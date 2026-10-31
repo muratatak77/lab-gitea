@@ -1218,6 +1218,16 @@ func Routes() *web.Router {
 					m.Delete("", user.UnblockUser)
 				}, context.UserAssignmentAPI())
 			}, rejectPublicOnly())
+
+			m.Group("/saved_replies", func() {
+				m.Combo("").
+					Get(user.ListSavedReplies).
+					Post(bind(api.CreateSavedReplyOption{}), user.CreateSavedReply)
+				m.Combo("/{id}").
+					Get(user.GetSavedReply).
+					Patch(bind(api.EditSavedReplyOption{}), user.EditSavedReply).
+					Delete(user.DeleteSavedReply)
+			}, rejectPublicOnly())
 		}, tokenRequiresScopes(auth_model.AccessTokenScopeCategoryUser), reqToken(), contextAuthenticatedUser())
 
 		// Repositories (requires repo scope, org scope)
