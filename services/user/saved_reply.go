@@ -6,6 +6,7 @@ package user
 import (
 	"context"
 	"strings"
+	"unicode/utf8"
 
 	"gitea.dev/models/db"
 	user_model "gitea.dev/models/user"
@@ -16,7 +17,7 @@ func validateSavedReply(ctx context.Context, userID, replyID int64, title, conte
 	if title == "" {
 		return util.NewInvalidArgumentErrorf("saved reply title must not be empty")
 	}
-	if len(title) > user_model.SavedReplyTitleMaxLength {
+	if utf8.RuneCountInString(title) > user_model.SavedReplyTitleMaxLength {
 		return util.NewInvalidArgumentErrorf("saved reply title must not exceed %d characters", user_model.SavedReplyTitleMaxLength)
 	}
 	if strings.TrimSpace(content) == "" {
