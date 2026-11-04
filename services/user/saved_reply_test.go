@@ -38,7 +38,8 @@ func TestCreateSavedReply(t *testing.T) {
 		{name: "non-ascii title too long", title: longNonASCII + "ş", content: "x", wantErr: util.ErrInvalidArgument},
 		{name: "blank title", title: "  ", content: "x", wantErr: util.ErrInvalidArgument},
 		{name: "blank content", title: "Blank", content: " \n", wantErr: util.ErrInvalidArgument},
-		{name: "content too long", title: "Long", content: strings.Repeat("a", user_model.SavedReplyContentMaxLength+1), wantErr: util.ErrInvalidArgument},
+		{name: "non-ascii content at limit", title: "Long", content: strings.Repeat("ş", user_model.SavedReplyContentMaxLength)},
+		{name: "content too long", title: "Too long", content: strings.Repeat("a", user_model.SavedReplyContentMaxLength+1), wantErr: util.ErrInvalidArgument},
 		{name: "taken title", title: "Duplicate", content: "x", wantErr: util.ErrAlreadyExist},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -65,6 +66,7 @@ func TestCreateSavedReplyLimit(t *testing.T) {
 	}
 	_, err := CreateSavedReply(t.Context(), 1, "one too many", "x")
 	require.ErrorIs(t, err, util.ErrInvalidArgument)
+	assert.NotNil(t, util.ErrorAsTranslatable(err))
 
 	count, err := db.Count[user_model.SavedReply](t.Context(), user_model.FindSavedRepliesOptions{UserID: 1})
 	require.NoError(t, err)

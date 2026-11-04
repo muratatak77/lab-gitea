@@ -23,8 +23,8 @@ func validateSavedReply(ctx context.Context, userID, replyID int64, title, conte
 	if strings.TrimSpace(content) == "" {
 		return util.NewInvalidArgumentErrorf("saved reply content must not be empty")
 	}
-	if len(content) > user_model.SavedReplyContentMaxLength {
-		return util.NewInvalidArgumentErrorf("saved reply content must not exceed %d bytes", user_model.SavedReplyContentMaxLength)
+	if utf8.RuneCountInString(content) > user_model.SavedReplyContentMaxLength {
+		return util.NewInvalidArgumentErrorf("saved reply content must not exceed %d characters", user_model.SavedReplyContentMaxLength)
 	}
 
 	inUse, err := user_model.SavedReplyTitleInUse(ctx, userID, title, replyID)
@@ -46,7 +46,8 @@ func CreateSavedReply(ctx context.Context, userID int64, title, content string) 
 			return nil, err
 		}
 		if count >= user_model.SavedRepliesMaxPerUser {
-			return nil, util.NewInvalidArgumentErrorf("a user can have at most %d saved replies", user_model.SavedRepliesMaxPerUser)
+			err := util.NewInvalidArgumentErrorf("a user can have at most %d saved replies", user_model.SavedRepliesMaxPerUser)
+			return nil, util.ErrorWrapTranslatable(err, "settings.saved_replies.limit_reached", user_model.SavedRepliesMaxPerUser)
 		}
 		if err := validateSavedReply(ctx, userID, 0, title, content); err != nil {
 			return nil, err

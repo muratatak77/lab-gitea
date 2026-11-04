@@ -40,8 +40,8 @@
 		<div class="ui attached segment">
 			<form class="ui form form-fetch-action" action="{{.Link}}" method="post">
 				<div class="field">
-					<label>{{ctx.Locale.Tr "settings.saved_replies.title"}}</label>
-					<input name="title" value="{{$formTitle}}" maxlength="{{.SavedReplyTitleMaxLength}}" required>
+					<label for="saved-reply-title">{{ctx.Locale.Tr "settings.saved_replies.title"}}</label>
+					<input id="saved-reply-title" name="title" value="{{$formTitle}}" maxlength="{{.SavedReplyTitleMaxLength}}" required>
 				</div>
 				<div class="field">
 					<label>{{ctx.Locale.Tr "settings.saved_replies.content"}}</label>
