@@ -32,6 +32,17 @@ export function renderSavedReplies(list: HTMLElement, replies: Array<SavedReply>
   }
 }
 
+let cachedReplies: Array<SavedReply> | null = null; // shared by all editors of the page, the list can be several MB
+
+export async function loadSavedReplies(url: string): Promise<Array<SavedReply>> {
+  if (!cachedReplies) {
+    const resp = await GET(url);
+    if (!resp.ok) throw new Error(`unexpected status ${resp.status}`);
+    cachedReplies = await resp.json();
+  }
+  return cachedReplies!;
+}
+
 export function initSavedRepliesButton(container: HTMLElement, textarea: HTMLTextAreaElement) {
   const button = container.querySelector('.markdown-button-saved-replies');
   if (!button) return;
@@ -56,10 +67,9 @@ export function initSavedRepliesButton(container: HTMLElement, textarea: HTMLTex
   button.addEventListener('click', async () => {
     panelTippy.show();
     try {
-      const resp = await GET(panel.getAttribute('data-url')!);
-      if (!resp.ok) throw new Error(`unexpected status ${resp.status}`);
-      replies = await resp.json();
+      replies = await loadSavedReplies(panel.getAttribute('data-url')!);
     } catch {
+      panelTippy.hide();
       showErrorToast('Failed to load saved replies');
       return;
     }

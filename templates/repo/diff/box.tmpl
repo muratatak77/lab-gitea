@@ -245,6 +245,7 @@
 				{{template "shared/combomarkdowneditor" (dict
 					"CustomInit" true
 					"MarkdownEditorContext" (ctx.MiscUtils.MarkdownEditorComment $.Repository)
+					"ShowSavedReplies" true
 					"TextareaName" "content"
 					"DropzoneParentContainer" ".ui.form"
 				)}}

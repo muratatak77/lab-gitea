@@ -39,10 +39,12 @@ type FindSavedRepliesOptions struct {
 	UserID int64
 }
 
+// ToConds limits the search to the user's saved replies
 func (opts FindSavedRepliesOptions) ToConds() builder.Cond {
 	return builder.Eq{"user_id": opts.UserID}
 }
 
+// ToOrders sorts saved replies by title
 func (opts FindSavedRepliesOptions) ToOrders() string {
 	return "title ASC, id ASC"
 }
@@ -64,10 +66,12 @@ func SavedReplyTitleInUse(ctx context.Context, userID int64, title string, exclu
 	return db.Exist[SavedReply](ctx, builder.Eq{"user_id": userID, "title": title}.And(builder.Neq{"id": excludeID}))
 }
 
+// CreateSavedReply inserts a new saved reply
 func CreateSavedReply(ctx context.Context, reply *SavedReply) error {
 	return db.Insert(ctx, reply)
 }
 
+// UpdateSavedReply stores the title and content of an existing saved reply
 func UpdateSavedReply(ctx context.Context, reply *SavedReply) error {
 	_, err := db.GetEngine(ctx).ID(reply.ID).Cols("title", "content").Update(reply)
 	return err

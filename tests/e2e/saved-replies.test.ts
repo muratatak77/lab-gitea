@@ -15,7 +15,7 @@ test('saved reply created in settings is inserted from the comment toolbar', asy
   const content = `Thanks for reporting ${randomString(8)}`;
   await page.goto('/user/settings/saved_replies');
   await page.getByLabel('Title').fill(title);
-  await page.locator('textarea[name="content"]').fill(content);
+  await page.getByLabel('Content').fill(content);
   await page.getByRole('button', {name: 'Add Saved Reply'}).click();
   await expect(page.locator('.item-title').filter({hasText: title})).toBeVisible();
 

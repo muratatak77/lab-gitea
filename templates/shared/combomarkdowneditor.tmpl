@@ -10,6 +10,7 @@
 * TextareaAriaLabel: aria-label attribute for the textarea
 * DropzoneParentContainer: container for file upload (leave it empty if no upload)
 * DisableAutosize: whether to disable automatic height resizing
+* ShowSavedReplies: show the saved replies picker, for issue and pull request comment boxes
 */}}
 {{$ariaLabel := or .TextareaAriaLabel .TextareaPlaceholder}}
 {{$editorContext := .MarkdownEditorContext}}
@@ -17,7 +18,7 @@
 {{$previewContext := or $editorContext.PreviewContext ""}}
 {{$previewLink := or $editorContext.PreviewLink (print AppSubUrl "/-/markup")}}
 {{$mentionsLink := or $editorContext.MentionsLink ""}}
-{{$showSavedReplies := and (eq $previewMode "comment") ctx.RootData.IsSigned}}
+{{$showSavedReplies := and .ShowSavedReplies ctx.RootData.IsSigned}}
 {{/* don't try to remove it, there are still many users who like it: https://github.com/go-gitea/gitea/issues/38228#issuecomment-4809312561 */}}
 {{$supportEasyMDE := or (eq $previewMode "comment") (eq $previewMode "wiki")}}
 <div {{if .ContainerId}}id="{{.ContainerId}}"{{end}} class="combo-markdown-editor {{if .CustomInit}}custom-init{{end}} {{.ContainerClasses}}"

@@ -1,4 +1,7 @@
-import {filterSavedReplies, renderSavedReplies} from './SavedReplies.ts';
+import {GET} from '../../modules/fetch.ts';
+import {filterSavedReplies, loadSavedReplies, renderSavedReplies} from './SavedReplies.ts';
+
+vi.mock('../../modules/fetch.ts', () => ({GET: vi.fn()}));
 
 const replies = [
   {id: 1, title: 'Duplicate', content: 'Closing as a duplicate.'},
@@ -21,4 +24,13 @@ test('renderSavedReplies escapes titles and shows the empty text', () => {
   renderSavedReplies(list, [], 'empty');
   expect(list.querySelector('button')).toBeNull();
   expect(list.textContent).toBe('empty');
+});
+
+test('loadSavedReplies caches a successful load only', async () => {
+  vi.mocked(GET).mockResolvedValueOnce({ok: false, status: 500} as Response);
+  await expect(loadSavedReplies('/list')).rejects.toThrow();
+  vi.mocked(GET).mockResolvedValueOnce({ok: true, json: () => Promise.resolve(replies)} as Response);
+  expect(await loadSavedReplies('/list')).toEqual(replies);
+  expect(await loadSavedReplies('/list')).toEqual(replies);
+  expect(GET).toHaveBeenCalledTimes(2);
 });
