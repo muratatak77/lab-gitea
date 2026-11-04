@@ -23,6 +23,13 @@ func TestFindSavedReplies(t *testing.T) {
 	require.Len(t, replies, 2)
 	assert.Equal(t, "Duplicate", replies[0].Title)
 	assert.Equal(t, "Needs reproduction", replies[1].Title)
+
+	titles, err := user_model.FindSavedReplyTitles(t.Context(), 2)
+	require.NoError(t, err)
+	require.Len(t, titles, 2)
+	assert.Equal(t, []int64{2, 1}, []int64{titles[0].ID, titles[1].ID})
+	assert.Equal(t, "Duplicate", titles[0].Title)
+	assert.Empty(t, titles[0].Content)
 }
 
 func TestSavedReplyOwnerScope(t *testing.T) {

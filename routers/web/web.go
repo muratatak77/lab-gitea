@@ -759,6 +759,7 @@ func registerWebRoutes(m *web.Router, webAuth *AuthMiddleware) {
 			m.Get("", user_setting.SavedReplies)
 			m.Post("", user_setting.SavedRepliesPost)
 			m.Get("/list", user_setting.SavedRepliesList)
+			m.Get("/{id}", user_setting.SavedReplyContent)
 			m.Get("/{id}/edit", user_setting.SavedReplyEdit)
 			m.Post("/{id}/edit", user_setting.SavedReplyEditPost)
 			m.Post("/{id}/delete", user_setting.SavedReplyDelete)

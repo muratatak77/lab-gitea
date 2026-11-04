@@ -50,18 +50,33 @@ func SavedReplies(ctx *context.Context) {
 	ctx.HTML(http.StatusOK, tplSettingsSavedReplies)
 }
 
-// SavedRepliesList returns the saved replies for the markdown editor's menu,
+type savedReplyTitle struct {
+	ID    int64  `json:"id"`
+	Title string `json:"title"`
+}
+
+// SavedRepliesList returns the titles of the saved replies for the markdown editor's menu,
 // the API can't be used because its page size may be smaller than the per-user limit
 func SavedRepliesList(ctx *context.Context) {
-	replies, err := db.Find[user_model.SavedReply](ctx, user_model.FindSavedRepliesOptions{
-		ListOptions: db.ListOptionsAll,
-		UserID:      ctx.Doer.ID,
-	})
+	replies, err := user_model.FindSavedReplyTitles(ctx, ctx.Doer.ID)
 	if err != nil {
-		ctx.ServerError("Find", err)
+		ctx.ServerError("FindSavedReplyTitles", err)
 		return
 	}
-	ctx.JSON(http.StatusOK, convert.ToSavedReplyList(replies))
+	result := make([]savedReplyTitle, len(replies))
+	for i, reply := range replies {
+		result[i] = savedReplyTitle{ID: reply.ID, Title: reply.Title}
+	}
+	ctx.JSON(http.StatusOK, result)
+}
+
+// SavedReplyContent returns one saved reply when it is picked in the markdown editor's menu
+func SavedReplyContent(ctx *context.Context) {
+	reply := loadSavedReply(ctx)
+	if ctx.Written() {
+		return
+	}
+	ctx.JSON(http.StatusOK, convert.ToSavedReply(reply))
 }
 
 func respondSavedReplyError(ctx *context.Context, title string, err error) {

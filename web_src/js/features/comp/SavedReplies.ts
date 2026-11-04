@@ -6,7 +6,6 @@ import {replaceTextareaSelection} from './EditorMarkdown.ts';
 export type SavedReply = {
   id: number,
   title: string,
-  content: string,
 };
 
 export function filterSavedReplies(replies: Array<SavedReply>, query: string): Array<SavedReply> {
@@ -32,15 +31,22 @@ export function renderSavedReplies(list: HTMLElement, replies: Array<SavedReply>
   }
 }
 
-let cachedReplies: Array<SavedReply> | null = null; // shared by all editors of the page, the list can be several MB
+let cachedReplies: Array<SavedReply> | null = null; // shared by all editors of the page
 
 export async function loadSavedReplies(url: string): Promise<Array<SavedReply>> {
   if (!cachedReplies) {
-    const resp = await GET(url);
+    const resp = await GET(`${url}/list`);
     if (!resp.ok) throw new Error(`unexpected status ${resp.status}`);
     cachedReplies = await resp.json();
   }
   return cachedReplies!;
+}
+
+// the list only has titles because the contents of all replies can be several MB
+export async function loadSavedReplyContent(url: string, id: number): Promise<string> {
+  const resp = await GET(`${url}/${id}`);
+  if (!resp.ok) throw new Error(`unexpected status ${resp.status}`);
+  return (await resp.json()).content;
 }
 
 export function initSavedRepliesButton(container: HTMLElement, textarea: HTMLTextAreaElement) {
@@ -81,11 +87,18 @@ export function initSavedRepliesButton(container: HTMLElement, textarea: HTMLTex
     renderSavedReplies(list, filterSavedReplies(replies, filter.value), emptyText);
   });
 
-  list.addEventListener('click', (e) => {
+  list.addEventListener('click', async (e) => {
     const item = (e.target as HTMLElement).closest('[data-saved-reply-id]');
     if (!item) return;
-    const id = Number(item.getAttribute('data-saved-reply-id'));
-    replaceTextareaSelection(textarea, replies.find((reply) => reply.id === id)!.content);
+    let content: string;
+    try {
+      content = await loadSavedReplyContent(panel.getAttribute('data-url')!, Number(item.getAttribute('data-saved-reply-id')));
+    } catch {
+      panelTippy.hide();
+      showErrorToast('Failed to load saved reply');
+      return;
+    }
+    replaceTextareaSelection(textarea, content);
     panelTippy.hide();
   });
 }

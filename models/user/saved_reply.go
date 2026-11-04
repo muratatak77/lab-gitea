@@ -61,6 +61,13 @@ func GetSavedReply(ctx context.Context, userID, id int64) (*SavedReply, error) {
 	return reply, nil
 }
 
+// FindSavedReplyTitles returns the user's saved replies ordered by title, loading only their ID and title
+func FindSavedReplyTitles(ctx context.Context, userID int64) ([]*SavedReply, error) {
+	opts := FindSavedRepliesOptions{UserID: userID}
+	replies := make([]*SavedReply, 0, 10)
+	return replies, db.GetEngine(ctx).Cols("id", "title").Where(opts.ToConds()).OrderBy(opts.ToOrders()).Find(&replies)
+}
+
 // SavedReplyTitleInUse reports whether another saved reply of the user has the title
 func SavedReplyTitleInUse(ctx context.Context, userID int64, title string, excludeID int64) (bool, error) {
 	return db.Exist[SavedReply](ctx, builder.Eq{"user_id": userID, "title": title}.And(builder.Neq{"id": excludeID}))

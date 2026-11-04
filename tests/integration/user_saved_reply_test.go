@@ -33,6 +33,9 @@ func TestUserSettingsSavedReplies(t *testing.T) {
 
 	replies := DecodeJSON(t, session.MakeRequest(t, NewRequest(t, "GET", link+"/list"), http.StatusOK), []*api.SavedReply{})
 	assert.Len(t, replies, 3)
+	assert.Empty(t, replies[0].Content)
+	picked := DecodeJSON(t, session.MakeRequest(t, NewRequestf(t, "GET", "%s/%d", link, reply.ID), http.StatusOK), &api.SavedReply{})
+	assert.Equal(t, "Thank you!", picked.Content)
 
 	const editLink = link + "/1/edit"
 	session.MakeRequest(t, NewRequest(t, "GET", editLink), http.StatusOK)
@@ -41,6 +44,7 @@ func TestUserSettingsSavedReplies(t *testing.T) {
 	assert.Equal(t, "Steps, please.", unittest.AssertExistsAndLoadBean(t, &user_model.SavedReply{ID: 1}).Content)
 
 	// user4's reply
+	session.MakeRequest(t, NewRequest(t, "GET", link+"/3"), http.StatusNotFound)
 	session.MakeRequest(t, NewRequest(t, "GET", link+"/3/edit"), http.StatusNotFound)
 	req = NewRequestWithValues(t, "POST", link+"/3/edit", map[string]string{"title": "x", "content": "y"})
 	session.MakeRequest(t, req, http.StatusNotFound)
