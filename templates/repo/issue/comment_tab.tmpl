@@ -7,6 +7,7 @@
 	{{template "shared/combomarkdowneditor" (dict
 		"CustomInit" true
 		"MarkdownEditorContext" (ctx.MiscUtils.MarkdownEditorComment $.Repository)
+		"ShowSavedReplies" true
 		"TextareaName" "content"
 		"TextareaContent" $textareaContent
 		"TextareaPlaceholder" (ctx.Locale.Tr "repo.diff.comment.placeholder")

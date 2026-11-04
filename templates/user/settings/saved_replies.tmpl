@@ -1,0 +1,76 @@
+{{template "user/settings/layout_head" (dict "pageClass" "user settings saved-replies")}}
+	<div class="user-setting-content">
+		<h4 class="ui top attached header">
+			{{ctx.Locale.Tr "settings.saved_replies"}}
+		</h4>
+		<div class="ui attached segment">
+			<p>{{ctx.Locale.Tr "settings.saved_replies.desc"}}</p>
+			{{if .SavedReplies}}
+				<div class="flex-divided-list items-with-main">
+					{{range $reply := .SavedReplies}}
+						<div class="item">
+							<div class="item-main">
+								<div class="item-title">{{$reply.Title}}</div>
+								<div class="item-body tw-whitespace-pre-line">{{StringUtils.EllipsisString $reply.Content 300}}</div>
+							</div>
+							<div class="item-trailing">
+								<a class="ui tiny button" href="{{AppSubUrl}}/user/settings/saved_replies/{{$reply.ID}}/edit">{{ctx.Locale.Tr "edit"}}</a>
+								<button type="button" class="ui red tiny button link-action" data-modal-confirm="#delete-saved-reply" data-url="{{AppSubUrl}}/user/settings/saved_replies/{{$reply.ID}}/delete">
+									{{ctx.Locale.Tr "remove"}}
+								</button>
+							</div>
+						</div>
+					{{end}}
+				</div>
+			{{else}}
+				<p>{{ctx.Locale.Tr "settings.saved_replies.none"}}</p>
+			{{end}}
+		</div>
+
+		{{$isEdit := .SavedReplyToEdit}}
+		{{$formTitle := ""}}
+		{{$formContent := ""}}
+		{{if $isEdit}}
+			{{$formTitle = $isEdit.Title}}
+			{{$formContent = $isEdit.Content}}
+		{{end}}
+		<h4 class="ui top attached header">
+			{{if $isEdit}}{{ctx.Locale.Tr "settings.saved_replies.edit"}}{{else}}{{ctx.Locale.Tr "settings.saved_replies.add"}}{{end}}
+		</h4>
+		<div class="ui attached segment">
+			<form class="ui form form-fetch-action" action="{{.Link}}" method="post">
+				<div class="field">
+					<label for="saved-reply-title">{{ctx.Locale.Tr "settings.saved_replies.title"}}</label>
+					<input id="saved-reply-title" name="title" value="{{$formTitle}}" maxlength="{{.SavedReplyTitleMaxLength}}" required>
+				</div>
+				<div class="field">
+					<label>{{ctx.Locale.Tr "settings.saved_replies.content"}}</label>
+					{{template "shared/combomarkdowneditor" (dict
+						"MarkdownEditorContext" (ctx.MiscUtils.MarkdownEditorGeneral ctx.RootData.SignedUser)
+						"TextareaName" "content"
+						"TextareaContent" $formContent
+						"TextareaMaxLength" .SavedReplyContentMaxLength
+						"TextareaAriaLabel" (ctx.Locale.Tr "settings.saved_replies.content")
+					)}}
+				</div>
+				<button type="submit" class="ui primary button">
+					{{if $isEdit}}{{ctx.Locale.Tr "save"}}{{else}}{{ctx.Locale.Tr "settings.saved_replies.add"}}{{end}}
+				</button>
+				{{if $isEdit}}
+					<a class="ui button" href="{{AppSubUrl}}/user/settings/saved_replies">{{ctx.Locale.Tr "cancel"}}</a>
+				{{end}}
+			</form>
+		</div>
+	</div>
+
+	<dialog class="modal-dialog" id="delete-saved-reply">
+		<div class="header">
+			{{svg "octicon-trash"}}
+			{{ctx.Locale.Tr "settings.saved_replies.delete"}}
+		</div>
+		<div class="content">
+			<p>{{ctx.Locale.Tr "settings.saved_replies.delete_desc"}}</p>
+		</div>
+		{{template "base/modal_actions_confirm" .}}
+	</dialog>
+{{template "user/settings/layout_footer" .}}

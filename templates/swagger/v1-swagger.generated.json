@@ -23128,6 +23128,163 @@
         }
       }
     },
+    "/user/saved_replies": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "List the authenticated user's saved replies",
+        "operationId": "userListSavedReplies",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "page number of results to return (1-based)",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "page size of results",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SavedReplyList"
+          },
+          "default": {
+            "$ref": "#/responses/error"
+          }
+        }
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "Create a saved reply",
+        "operationId": "userCreateSavedReply",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateSavedReplyOption"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/SavedReply"
+          },
+          "default": {
+            "$ref": "#/responses/error"
+          }
+        }
+      }
+    },
+    "/user/saved_replies/{id}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "Get a saved reply of the authenticated user",
+        "operationId": "userGetSavedReply",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "id of the saved reply",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SavedReply"
+          },
+          "default": {
+            "$ref": "#/responses/error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Delete a saved reply",
+        "operationId": "userDeleteSavedReply",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "id of the saved reply",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/responses/empty"
+          },
+          "default": {
+            "$ref": "#/responses/error"
+          }
+        }
+      },
+      "patch": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "user"
+        ],
+        "summary": "Edit a saved reply",
+        "operationId": "userEditSavedReply",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "id of the saved reply",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EditSavedReplyOption"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SavedReply"
+          },
+          "default": {
+            "$ref": "#/responses/error"
+          }
+        }
+      }
+    },
     "/user/settings": {
       "get": {
         "produces": [
@@ -27255,6 +27412,25 @@
       },
       "x-go-package": "gitea.dev/modules/structs"
     },
+    "CreateSavedReplyOption": {
+      "description": "CreateSavedReplyOption options for creating a saved reply",
+      "type": "object",
+      "required": [
+        "title",
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string",
+          "x-go-name": "Content"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        }
+      },
+      "x-go-package": "gitea.dev/modules/structs"
+    },
     "CreateStatusOption": {
       "description": "CreateStatusOption holds the information needed to create a new CommitStatus for a Commit",
       "type": "object",
@@ -28640,6 +28816,21 @@
           "description": "a URL with more information about the repository.",
           "type": "string",
           "x-go-name": "Website"
+        }
+      },
+      "x-go-package": "gitea.dev/modules/structs"
+    },
+    "EditSavedReplyOption": {
+      "description": "EditSavedReplyOption options for editing a saved reply",
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "x-go-name": "Content"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
         }
       },
       "x-go-package": "gitea.dev/modules/structs"
@@ -32608,6 +32799,36 @@
       },
       "x-go-package": "gitea.dev/modules/structs"
     },
+    "SavedReply": {
+      "description": "SavedReply represents a reusable comment text of a user",
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "x-go-name": "Content"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "Created"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "Updated"
+        }
+      },
+      "x-go-package": "gitea.dev/modules/structs"
+    },
     "SearchResults": {
       "description": "SearchResults results of a successful search",
       "type": "object",
@@ -34608,6 +34829,21 @@
       "description": "RunnerList",
       "schema": {
         "$ref": "#/definitions/ActionRunnersResponse"
+      }
+    },
+    "SavedReply": {
+      "description": "SavedReply",
+      "schema": {
+        "$ref": "#/definitions/SavedReply"
+      }
+    },
+    "SavedReplyList": {
+      "description": "SavedReplyList",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/SavedReply"
+        }
       }
     },
     "SearchResults": {

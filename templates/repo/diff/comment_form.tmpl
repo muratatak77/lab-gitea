@@ -15,6 +15,7 @@
 		{{template "shared/combomarkdowneditor" (dict
 			"CustomInit" true
 			"MarkdownEditorContext" (ctx.MiscUtils.MarkdownEditorComment $root.Repository)
+			"ShowSavedReplies" true
 			"TextareaName" "content"
 			"TextareaPlaceholder" (ctx.Locale.Tr "repo.diff.comment.placeholder")
 			"DropzoneParentContainer" "form"

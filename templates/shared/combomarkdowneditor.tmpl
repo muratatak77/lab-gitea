@@ -10,6 +10,7 @@
 * TextareaAriaLabel: aria-label attribute for the textarea
 * DropzoneParentContainer: container for file upload (leave it empty if no upload)
 * DisableAutosize: whether to disable automatic height resizing
+* ShowSavedReplies: show the saved replies picker, for issue and pull request comment boxes
 */}}
 {{$ariaLabel := or .TextareaAriaLabel .TextareaPlaceholder}}
 {{$editorContext := .MarkdownEditorContext}}
@@ -17,6 +18,7 @@
 {{$previewContext := or $editorContext.PreviewContext ""}}
 {{$previewLink := or $editorContext.PreviewLink (print AppSubUrl "/-/markup")}}
 {{$mentionsLink := or $editorContext.MentionsLink ""}}
+{{$showSavedReplies := and .ShowSavedReplies ctx.RootData.IsSigned}}
 {{/* don't try to remove it, there are still many users who like it: https://github.com/go-gitea/gitea/issues/38228#issuecomment-4809312561 */}}
 {{$supportEasyMDE := or (eq $previewMode "comment") (eq $previewMode "wiki")}}
 <div {{if .ContainerId}}id="{{.ContainerId}}"{{end}} class="combo-markdown-editor {{if .CustomInit}}custom-init{{end}} {{.ContainerClasses}}"
@@ -62,6 +64,11 @@
 				<md-ref class="markdown-toolbar-button" data-tooltip-content="{{ctx.Locale.Tr "editor.buttons.ref.tooltip"}}">{{svg "octicon-cross-reference"}}</md-ref>
 			</div>
 			{{end}}
+			{{if $showSavedReplies}}
+			<div class="markdown-toolbar-group">
+				<button class="markdown-toolbar-button markdown-button-saved-replies" type="button" aria-label="{{ctx.Locale.Tr "editor.buttons.saved_replies.tooltip"}}" data-tooltip-content="{{ctx.Locale.Tr "editor.buttons.saved_replies.tooltip"}}">{{svg "octicon-reply"}}</button>
+			</div>
+			{{end}}
 			<div class="markdown-toolbar-group">
 				<button class="markdown-toolbar-button markdown-switch-monospace" type="button" role="switch" data-enable-text="{{ctx.Locale.Tr "editor.buttons.enable_monospace_font"}}" data-disable-text="{{ctx.Locale.Tr "editor.buttons.disable_monospace_font"}}">{{svg "octicon-typography"}}</button>
 				{{if $supportEasyMDE}}
@@ -93,4 +100,13 @@
 			<button class="ui button primary" type="button">{{ctx.Locale.Tr "editor.buttons.table.add.insert"}}</button>
 		</div>
 	</div>
+	{{if $showSavedReplies}}
+	<div class="markdown-saved-replies-panel tippy-target" data-url="{{AppSubUrl}}/user/settings/saved_replies" data-empty-text="{{ctx.Locale.Tr "editor.buttons.saved_replies.empty"}}">
+		<div class="ui form tw-p-2">
+			<input class="saved-replies-filter" type="search" aria-label="{{ctx.Locale.Tr "editor.buttons.saved_replies.filter"}}" placeholder="{{ctx.Locale.Tr "editor.buttons.saved_replies.filter"}}">
+		</div>
+		<div class="saved-replies-list tw-max-h-64 tw-overflow-y-auto"></div>
+		<a class="item" href="{{AppSubUrl}}/user/settings/saved_replies">{{ctx.Locale.Tr "editor.buttons.saved_replies.manage"}}</a>
+	</div>
+	{{end}}
 </div>

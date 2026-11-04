@@ -24,6 +24,7 @@
 			<div class="field">
 				{{template "shared/combomarkdowneditor" (dict
 					"MarkdownEditorContext" (ctx.MiscUtils.MarkdownEditorComment $.Repository)
+					"ShowSavedReplies" true
 					"TextareaName" "content"
 					"TextareaPlaceholder" (ctx.Locale.Tr "repo.diff.review.placeholder")
 					"DropzoneParentContainer" "form"

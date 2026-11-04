@@ -310,3 +310,10 @@ type BlockUserForm struct {
 	Blockee string `binding:"Required"`
 	Note    string
 }
+
+// SavedReplyForm creates or edits a saved reply
+type SavedReplyForm struct {
+	middleware.FormDefaultValidator
+	Title   string `binding:"TrimSpace;Required;MaxSize(100)" locale:"settings.saved_replies.title"`
+	Content string `binding:"Required" locale:"settings.saved_replies.content"`
+}

@@ -86,6 +86,7 @@ func TestDeleteUser(t *testing.T) {
 		unittest.AssertNotExistsBean(t, &auth.WebAuthnCredential{UserID: 32})
 		unittest.AssertNotExistsBean(t, &activities_model.Notification{UserID: 2})
 		unittest.AssertNotExistsBean(t, &issues_model.IssueWatch{UserID: 2})
+		unittest.AssertNotExistsBean(t, &user_model.SavedReply{UserID: 2})
 	})
 }
 
