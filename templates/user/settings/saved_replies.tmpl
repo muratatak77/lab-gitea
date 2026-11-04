@@ -11,7 +11,7 @@
 						<div class="item">
 							<div class="item-main">
 								<div class="item-title">{{$reply.Title}}</div>
-								<div class="item-body tw-whitespace-pre-line">{{$reply.Content}}</div>
+								<div class="item-body tw-whitespace-pre-line">{{StringUtils.EllipsisString $reply.Content 300}}</div>
 							</div>
 							<div class="item-trailing">
 								<a class="ui tiny button" href="{{AppSubUrl}}/user/settings/saved_replies/{{$reply.ID}}/edit">{{ctx.Locale.Tr "edit"}}</a>

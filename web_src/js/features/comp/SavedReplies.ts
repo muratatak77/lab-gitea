@@ -90,15 +90,14 @@ export function initSavedRepliesButton(container: HTMLElement, textarea: HTMLTex
   list.addEventListener('click', async (e) => {
     const item = (e.target as HTMLElement).closest('[data-saved-reply-id]');
     if (!item) return;
+    panelTippy.hide(); // before the fetch, so a second click can't insert the reply twice
     let content: string;
     try {
       content = await loadSavedReplyContent(panel.getAttribute('data-url')!, Number(item.getAttribute('data-saved-reply-id')));
     } catch {
-      panelTippy.hide();
       showErrorToast('Failed to load saved reply');
       return;
     }
     replaceTextareaSelection(textarea, content);
-    panelTippy.hide();
   });
 }

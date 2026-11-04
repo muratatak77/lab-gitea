@@ -5,6 +5,7 @@ package integration
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
 	"gitea.dev/models/unittest"
@@ -52,4 +53,10 @@ func TestUserSettingsSavedReplies(t *testing.T) {
 
 	session.MakeRequest(t, NewRequestf(t, "POST", "%s/%d/delete", link, reply.ID), http.StatusOK)
 	unittest.AssertNotExistsBean(t, &user_model.SavedReply{ID: reply.ID})
+
+	long := strings.Repeat("a", 300) + "saved-reply-end"
+	session.MakeRequest(t, NewRequestWithValues(t, "POST", link, map[string]string{"title": "Long", "content": long}), http.StatusOK)
+	resp = session.MakeRequest(t, NewRequest(t, "GET", link), http.StatusOK)
+	assert.Contains(t, resp.Body.String(), strings.Repeat("a", 297)+"…")
+	assert.NotContains(t, resp.Body.String(), "saved-reply-end")
 }
